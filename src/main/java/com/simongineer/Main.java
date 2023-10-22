@@ -1,10 +1,11 @@
 package com.simongineer;
 
-public class Main
-{
-	public static void main(String[] args)
-	{
-		StableDiff.generate("pics");
+import com.simongineer.diffuse_match.Starter;
+
+public class Main {
+	public static void main(String[] args) {
+		new Starter();
+
 		System.err.println("Ended app");
 	}
 }
