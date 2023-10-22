@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class Prompt {
     /**
-     * The prompt text to use for generating the output.
+     * The prompt text to use for generating the output
      */
     private String prompt;
 
