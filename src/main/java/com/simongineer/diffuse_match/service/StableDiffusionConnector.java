@@ -19,13 +19,40 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Class for connecting to the Stable Diffusion API and parsing the response.
+ * Currently, only the txt2img API is supported. The API returns a JSON object
+ * containing multiple images, yet just the first one is returned for now.
+ * 
+ */
 public abstract class StableDiffusionConnector {
 
+    /**
+     * Stable Diffusion API URL.
+     */
     private static final String STABLE_DIFF_URL = "http://localhost:7860";
+    /**
+     * Stable Diffusion txt2img API path.
+     */
     private static final String STABLE_DIFF_TXT2IMG_PATH = "/sdapi/v1/txt2img";
+    /**
+     * User agent for the HTTP request.
+     */
     private static final String USER_AGENT = "Mozilla/5.0";
+    /**
+     * JSON media type for the request body.
+     */
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+    /**
+     * Parses specified prompt into a JSON object and sends it to the Stable
+     * Diffusion API by executing an HTTP POST request. The response is parsed into
+     * a JSON object and returned. Note that the response may contain multiple
+     * images, yet just the first one is returned for now.
+     * 
+     * @param promptTxt2Img prompt to be parsed and sent to the API
+     * @return the first image returned by the API
+     */
     public static byte[] generateTxt2Img(Prompt promptTxt2Img) {
         JsonElement e = JsonParser.parseString(new Gson().toJson(promptTxt2Img));
         JsonObject payload = e.getAsJsonObject();
