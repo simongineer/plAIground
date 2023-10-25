@@ -1,5 +1,8 @@
 package com.simongineer.diffuse_match;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import com.google.gson.Gson;
 import com.simongineer.diffuse_match.beans.Prompt;
 import com.simongineer.diffuse_match.service.StableDiffusionConnector;
@@ -26,7 +29,11 @@ public class Starter {
         Prompt prompt = new Gson().fromJson(Local.JSON_REQUEST_SAMPLE_DATA, Prompt.class);
         System.err.println("prompt JSON: " + prompt.toJson());
 
-        byte[] imageBytes = StableDiffusionConnector.generateTxt2Img(prompt);
-        Local.saveGeneratedImage(imageBytes);
+        CompletableFuture<byte[]> futureImage = StableDiffusionConnector.generateTxt2ImgAsync(prompt);
+        try {
+            Local.saveGeneratedImage(futureImage.get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }

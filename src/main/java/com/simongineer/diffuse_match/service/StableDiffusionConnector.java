@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.simongineer.diffuse_match.beans.Prompt;
@@ -43,48 +43,63 @@ public abstract class StableDiffusionConnector {
      * JSON media type for the request body.
      */
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    /**
+     * Timeout in milliseconds for establishing an HTTP connection.
+     */
+    private static final long HTTP_CONNECT_TIMEOUT_MS = 30L;
+    /**
+     * Timeout in milliseconds for reading an HTTP response.
+     */
+    private static final long HTTP_READ_TIMEOUT_MS = 20000L;
 
     /**
-     * Parses specified prompt into a JSON object and sends it to the Stable
-     * Diffusion API by executing an HTTP POST request. The response is parsed into
-     * a JSON object and returned. Note that the response may contain multiple
-     * images, yet just the first one is returned for now.
+     * Generates an image asynchronously from a prompt using the Stable Diffusion
+     * txt2img API.
      * 
-     * @param promptTxt2Img prompt to be parsed and sent to the API
-     * @return the first image returned by the API
+     * @param promptTxt2Img prompt for the txt2img API
+     * @return image bytes or null if an error occurred
+     * 
+     * @see #parseResponse(Response)
+     * @see #extractImage(JsonObject)
      */
-    public static byte[] generateTxt2Img(Prompt promptTxt2Img) {
-        JsonElement e = JsonParser.parseString(new Gson().toJson(promptTxt2Img));
-        JsonObject payload = e.getAsJsonObject();
+    public static CompletableFuture<byte[]> generateTxt2ImgAsync(Prompt promptTxt2Img) {
+        return CompletableFuture.supplyAsync(() -> {
+            JsonObject payload = JsonParser.parseString(new Gson().toJson(promptTxt2Img)).getAsJsonObject();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(HTTP_CONNECT_TIMEOUT_MS, TimeUnit.SECONDS)
+                    .readTimeout(HTTP_READ_TIMEOUT_MS, TimeUnit.SECONDS)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(STABLE_DIFF_URL + STABLE_DIFF_TXT2IMG_PATH)
+                    .addHeader("User-Agent", USER_AGENT)
+                    .post(RequestBody.create(new Gson().toJson(payload), JSON))
+                    .build();
 
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(20000, TimeUnit.SECONDS)
-                .readTimeout(20000, TimeUnit.SECONDS).build();
 
-        RequestBody requestBody = RequestBody.create(new Gson().toJson(payload), JSON);
-        Request request = new Request.Builder().url(STABLE_DIFF_URL + STABLE_DIFF_TXT2IMG_PATH)
-                .addHeader("User-Agent", USER_AGENT).post(requestBody).build();
-        Response response = null;
-        String responseBody;
-        try {
-            response = client.newCall(request).execute();
-            responseBody = Objects.requireNonNull(response.body()).string();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        } finally {
-            response.close();
-        }
-        JsonObject responseJson = new Gson().fromJson(responseBody, JsonObject.class);
-        if (responseJson.has("error")) {
-            System.out.println("error: " + responseJson);
-        }
+            try (Response response = client.newCall(request).execute()) {
+                JsonObject responseJson = parseResponse(response);
+                if (responseJson.has("error"))
+                    System.out.println("JSON-error: " + responseJson);
+                return extractImage(responseJson);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+    }
 
+    private static JsonObject parseResponse(Response response) throws IOException {
+        String responseBody = Objects.requireNonNull(response.body()).string();
+        return new Gson().fromJson(responseBody, JsonObject.class);
+    }
+
+    private static byte[] extractImage(JsonObject responseJson) {
         JsonArray jsonArray = responseJson.getAsJsonArray("images");
         List<byte[]> imgList = new ArrayList<>();
         jsonArray.forEach(jsonElement -> {
             byte[] imageBytes = java.util.Base64.getDecoder().decode((jsonElement.getAsString()));
             imgList.add(imageBytes);
         });
-
         return imgList.get(0);
     }
 }
