@@ -26,6 +26,7 @@ import okhttp3.Response;
  * 
  */
 public abstract class StableDiffusionConnector {
+
     /**
      * Stable Diffusion API URL.
      */
@@ -73,6 +74,7 @@ public abstract class StableDiffusionConnector {
                     .addHeader("User-Agent", USER_AGENT)
                     .post(RequestBody.create(new Gson().toJson(payload), JSON))
                     .build();
+
 
             try (Response response = client.newCall(request).execute()) {
                 JsonObject responseJson = parseResponse(response);
