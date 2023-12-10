@@ -75,7 +75,6 @@ public abstract class StableDiffusionConnector {
                     .post(RequestBody.create(new Gson().toJson(payload), JSON))
                     .build();
 
-
             try (Response response = client.newCall(request).execute()) {
                 JsonObject responseJson = parseResponse(response);
                 if (responseJson.has("error"))
