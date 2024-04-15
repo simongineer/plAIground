@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.simongineer.diffuse_match.beans.Prompt;
+
 /**
  * This class is used to read local files.
  * 
@@ -68,8 +70,9 @@ public abstract class Local {
      * 
      * @param imageBytes The base64 image data to save.
      */
-    public static void saveGeneratedImage(byte[] imageBytes) {
-        File pngFile = new File("pics/" + new SimpleDateFormat("dd_MM_yyyy__HH_mm_ss").format(new Date()) + ".png");
+    public static void saveGeneratedImage(byte[] imageBytes, Prompt prompt) {
+        File pngFile = new File("pics/" + prompt.getPrompt() + "_"
+                + new SimpleDateFormat("dd_MM_yyyy__HH_mm_ss").format(new Date()) + ".png");
         RenderedImage image = null;
         try {
             image = ImageIO.read(new ByteArrayInputStream(imageBytes));
