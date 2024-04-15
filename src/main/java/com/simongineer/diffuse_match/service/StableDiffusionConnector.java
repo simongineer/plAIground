@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.utils.Local;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -75,7 +76,6 @@ public abstract class StableDiffusionConnector {
                     .post(RequestBody.create(new Gson().toJson(payload), JSON))
                     .build();
 
-
             try (Response response = client.newCall(request).execute()) {
                 JsonObject responseJson = parseResponse(response);
                 if (responseJson.has("error"))
@@ -100,6 +100,8 @@ public abstract class StableDiffusionConnector {
             byte[] imageBytes = java.util.Base64.getDecoder().decode((jsonElement.getAsString()));
             imgList.add(imageBytes);
         });
+        Local.saveGeneratedImage(imgList.get(0));
+        Local.saveGeneratedImage(imgList.get(1));
         return imgList.get(0);
     }
 }
