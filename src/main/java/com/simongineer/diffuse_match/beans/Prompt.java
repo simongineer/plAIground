@@ -38,7 +38,7 @@ public class Prompt {
     /**
      * The width of the output image.
      */
-    private int width;
+    private int width; 
 
     /**
      * The height of the output image.
