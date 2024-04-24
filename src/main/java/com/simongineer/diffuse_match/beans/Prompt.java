@@ -2,7 +2,6 @@ package com.simongineer.diffuse_match.beans;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.simongineer.diffuse_match.beans.category.Category;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +37,7 @@ public class Prompt {
     /**
      * The width of the output image.
      */
-    private int width; 
+    private int width;
 
     /**
      * The height of the output image.
