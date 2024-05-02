@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -62,7 +62,7 @@ public abstract class StableDiffusionConnector {
      * @see #parseResponse(Response)
      * @see #extractImage(JsonObject)
      */
-    public static CompletableFuture<byte[]> generateTxt2ImgAsync(Prompt promptTxt2Img) {
+    public static CompletableFuture<byte[]> generateTxt2ImgAsync(StableDiffusionPrompt promptTxt2Img) {
         return CompletableFuture.supplyAsync(() -> {
             JsonObject payload = JsonParser.parseString(new Gson().toJson(promptTxt2Img)).getAsJsonObject();
             OkHttpClient client = new OkHttpClient.Builder()
