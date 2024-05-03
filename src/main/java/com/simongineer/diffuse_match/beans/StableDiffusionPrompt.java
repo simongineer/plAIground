@@ -18,6 +18,7 @@ public class StableDiffusionPrompt extends Prompt {
     /**
      * The number of steps to use for generating the output.
      */
+    @SerializedName("steps")
     private int steps;
 
     /**
@@ -29,11 +30,13 @@ public class StableDiffusionPrompt extends Prompt {
     /**
      * The width of the output image.
      */
+    @SerializedName("width")
     private int width;
 
     /**
      * The height of the output image.
      */
+    @SerializedName("height")
     private int height;
 
     /**
