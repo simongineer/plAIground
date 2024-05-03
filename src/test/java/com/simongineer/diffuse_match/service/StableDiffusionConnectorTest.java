@@ -3,7 +3,7 @@ package com.simongineer.diffuse_match.service;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
-import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
 import com.simongineer.diffuse_match.utils.Local;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +16,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class StableDiffusionConnectorTest {
 
-    private static final Prompt prompt = new Gson().fromJson(Local.JSON_REQUEST_SAMPLE_DATA, Prompt.class);
+    private static final StableDiffusionPrompt prompt = new Gson()
+            .fromJson(Local.JSON_STABLEDIFUSSION_REQUEST_TEMPLATE, StableDiffusionPrompt.class);
 
     /**
      * Tests the generateTxt2Img method with a valid prompt.
