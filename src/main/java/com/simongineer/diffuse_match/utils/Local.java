@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
 
 /**
  * This class is used to read local files.
@@ -28,15 +28,16 @@ public abstract class Local {
     /**
      * The name of the JSON request template file.
      */
-    public static final String JSON_REQUEST_TEMPLATE = "json_request_template.json";
+    public static String JSON_STABLEDIFUSSION_REQUEST_TEMPLATE = "json_stablediffusion_template.json";
     /**
-     * The JSON request sample data.
+     * The JSON Ollama request template file.
      */
-    public static final String JSON_REQUEST_SAMPLE_DATA;
+    public static String JSON_OLLAMA_REQUEST_TEMPLATE = "json_ollama_template.json";
 
     static {
-        // read the JSON request template file
-        JSON_REQUEST_SAMPLE_DATA = printFile(JSON_REQUEST_TEMPLATE);
+        // read the JSON request template files
+        JSON_STABLEDIFUSSION_REQUEST_TEMPLATE = printFile(JSON_STABLEDIFUSSION_REQUEST_TEMPLATE);
+        JSON_OLLAMA_REQUEST_TEMPLATE = printFile(JSON_OLLAMA_REQUEST_TEMPLATE);
         // check if the generated pictures folder exists, create one otherwise
         File picsFolder = new File(GENERATED_PICS_PATH);
         if (!picsFolder.exists()) {
@@ -70,7 +71,7 @@ public abstract class Local {
      * 
      * @param imageBytes The base64 image data to save.
      */
-    public static void saveGeneratedImage(byte[] imageBytes, Prompt prompt) {
+    public static void saveGeneratedImage(byte[] imageBytes, StableDiffusionPrompt prompt) {
         File pngFile = new File("pics/" + prompt.getPrompt() + "_"
                 + new SimpleDateFormat("dd_MM_yyyy__HH_mm_ss").format(new Date()) + ".png");
         RenderedImage image = null;
