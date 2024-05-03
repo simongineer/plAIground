@@ -3,8 +3,8 @@ package com.simongineer.diffuse_match;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import com.google.gson.Gson;
 import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
 import com.simongineer.diffuse_match.service.StableDiffusionConnector;
 import com.simongineer.diffuse_match.utils.Generator;
 import com.simongineer.diffuse_match.utils.Local;
@@ -27,8 +27,8 @@ public class Starter {
      * @see Local#saveGeneratedImage(byte[])
      */
     private void init() {
-        Prompt prompt = Generator.generatePrompt();
-        Prompt clone = Generator.generatePrompt();
+        StableDiffusionPrompt prompt = Generator.generatePrompt();
+        StableDiffusionPrompt clone = Generator.generatePrompt();
         clone.setPrompt(prompt.getPrompt());
 
         CompletableFuture<byte[]> futureImage = StableDiffusionConnector.generateTxt2ImgAsync(prompt);
