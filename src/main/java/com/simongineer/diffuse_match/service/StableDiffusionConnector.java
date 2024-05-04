@@ -10,10 +10,8 @@ import java.util.concurrent.TimeUnit;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
 
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -25,7 +23,7 @@ import okhttp3.Response;
  * containing multiple images, yet just the first one is returned for now.
  * 
  */
-public abstract class StableDiffusionConnector {
+public abstract class StableDiffusionConnector extends AIConnector {
 
     /**
      * Stable Diffusion API URL.
@@ -35,36 +33,19 @@ public abstract class StableDiffusionConnector {
      * Stable Diffusion txt2img API path.
      */
     private static final String STABLE_DIFF_TXT2IMG_PATH = "/sdapi/v1/txt2img";
-    /**
-     * User agent for the HTTP request.
-     */
-    private static final String USER_AGENT = "Mozilla/5.0";
-    /**
-     * JSON media type for the request body.
-     */
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    /**
-     * Timeout in milliseconds for establishing an HTTP connection.
-     */
-    private static final long HTTP_CONNECT_TIMEOUT_MS = 30L;
-    /**
-     * Timeout in milliseconds for reading an HTTP response.
-     */
-    private static final long HTTP_READ_TIMEOUT_MS = 20000L;
 
     /**
      * Generates an image asynchronously from a prompt using the Stable Diffusion
      * txt2img API.
      * 
-     * @param promptTxt2Img prompt for the txt2img API
+     * @param prompt prompt for the txt2img API
      * @return image bytes or null if an error occurred
      * 
      * @see #parseResponse(Response)
      * @see #extractImage(JsonObject)
      */
-    public static CompletableFuture<byte[]> generateTxt2ImgAsync(Prompt promptTxt2Img) {
+    public static CompletableFuture<byte[]> generateTxt2ImgAsync(StableDiffusionPrompt prompt) {
         return CompletableFuture.supplyAsync(() -> {
-            JsonObject payload = JsonParser.parseString(new Gson().toJson(promptTxt2Img)).getAsJsonObject();
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(HTTP_CONNECT_TIMEOUT_MS, TimeUnit.SECONDS)
                     .readTimeout(HTTP_READ_TIMEOUT_MS, TimeUnit.SECONDS)
@@ -72,7 +53,7 @@ public abstract class StableDiffusionConnector {
             Request request = new Request.Builder()
                     .url(STABLE_DIFF_URL + STABLE_DIFF_TXT2IMG_PATH)
                     .addHeader("User-Agent", USER_AGENT)
-                    .post(RequestBody.create(new Gson().toJson(payload), JSON))
+                    .post(RequestBody.create(new Gson().toJson(prompt), JSON))
                     .build();
 
             try (Response response = client.newCall(request).execute()) {

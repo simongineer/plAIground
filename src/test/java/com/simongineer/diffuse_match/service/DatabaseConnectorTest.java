@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.*;
 
 import com.simongineer.diffuse_match.beans.Prompt;
+import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
 
 public class DatabaseConnectorTest {
 
@@ -22,7 +23,7 @@ public class DatabaseConnectorTest {
 
     @Test
     public void testCreate() {
-        Prompt entity = new Prompt();
+        StableDiffusionPrompt entity = new StableDiffusionPrompt();
         databaseConnector.getEntityManager().persist(entity);
 
         Mockito.verify(entityManager, Mockito.times(1)).persist(entity);
@@ -37,7 +38,7 @@ public class DatabaseConnectorTest {
 
     @Test
     public void testUpdate() {
-        Prompt entity = new Prompt();
+        StableDiffusionPrompt entity = new StableDiffusionPrompt();
         databaseConnector.getEntityManager().merge(entity);
 
         Mockito.verify(entityManager, Mockito.times(1)).merge(entity);
@@ -45,7 +46,7 @@ public class DatabaseConnectorTest {
 
     @Test
     public void testDelete() {
-        Prompt entity = new Prompt();
+        StableDiffusionPrompt entity = new StableDiffusionPrompt();
         databaseConnector.getEntityManager().remove(entity);
 
         Mockito.verify(entityManager, Mockito.times(1)).remove(entity);
