@@ -22,9 +22,12 @@ public abstract class Generator {
     private static String promptTokens() {
         String[] categories = randomizeEachCategory();
 
-        return "A " + categories[0] + " with a " + categories[1] + " in front of a "
-                + categories[2] + " next to a " + categories[3] + " at " + categories[4] + "{{" + ++randomizerCounter
-                + "}}";
+        // return "A " + categories[0] + " with a " + categories[1] + " in front of a "
+        // + categories[2] + " next to a " + categories[3] + " at " + categories[4] +
+        // "{{" + ++randomizerCounter
+        // + "}}";
+
+        return "Generate a picture of a serene beach landscape at sunset. The sky should be a mix of orange, pink, and purple hues. There should be a palm tree on the left side of the image, and a sandcastle with a red flag on the right. Include a pair of flip-flops in the foreground.";
     }
 
     private static String[] randomizeEachCategory() {
@@ -36,7 +39,7 @@ public abstract class Generator {
         categories[3] = Category.Vehicle.values()[(int) (Math.random() * Category.Vehicle.values().length)].name();
         categories[4] = Category.DayTime.values()[(int) (Math.random() * Category.DayTime.values().length)].name();
 
-        System.out.println("Categories: " + Arrays.toString(categories));
+        System.out.println("Generator#randomizeEachCategory: Categories: " + Arrays.toString(categories));
 
         return categories;
     }
@@ -61,6 +64,7 @@ public abstract class Generator {
     public static OllamaPrompt generateOllamaPrompt() {
         OllamaPrompt prompt = new Gson().fromJson(Local.JSON_OLLAMA_REQUEST_TEMPLATE, OllamaPrompt.class);
         prompt.setPrompt(Generator.promptTokens());
+        System.err.println("OllamaPrompt: " + prompt.getPrompt());
         return prompt;
     }
 }

@@ -22,6 +22,10 @@ import com.simongineer.diffuse_match.beans.StableDiffusionPrompt;
  */
 public abstract class Local {
     /**
+     * Counter for the picture match.
+     */
+    private static int picMatchCounter = 0;
+    /**
      * The path to the generated pictures.
      */
     public static final String GENERATED_PICS_PATH = "pics/";
@@ -72,7 +76,8 @@ public abstract class Local {
      * @param imageBytes The base64 image data to save.
      */
     public static void saveGeneratedImage(byte[] imageBytes, StableDiffusionPrompt prompt) {
-        File pngFile = new File("pics/" + prompt.getPrompt() + "_"
+        File pngFile = new File("pics/"
+                + prompt.getPrompt().split(" ")[(picMatchCounter == 1) ? picMatchCounter : (picMatchCounter = 0)] + "_"
                 + new SimpleDateFormat("dd_MM_yyyy__HH_mm_ss").format(new Date()) + ".png");
         RenderedImage image = null;
         try {
